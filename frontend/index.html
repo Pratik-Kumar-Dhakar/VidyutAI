@@ -1,0 +1,294 @@
+
+<!DOCTYPE html>
+<html lang="en"> <!-- Removed default theme class -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://css.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #718096; }
+
+        /* CSS Variables for Theming */
+        :root {
+            --bg-primary: #f3f4f6;      /* gray-100 */
+            --bg-secondary: #ffffff;     /* white */
+            --bg-tertiary: #f9fafb;     /* gray-50 */
+            --text-primary: #1f2937;     /* gray-800 */
+            --text-secondary: #6b7280;   /* gray-500 */
+            --shadow-color-light: rgba(0,0,0,0.05);
+            --chart-grid-color: rgba(0, 0, 0, 0.1);
+            --toggle-hover-bg: #e5e7eb;  /* gray-200 */
+        }
+
+        html[data-theme='dark'] {
+            --bg-primary: #111827;      /* gray-900 */
+            --bg-secondary: #1f2937;     /* gray-800 */
+            --bg-tertiary: #111827;      /* gray-900 also for log panel in dark */
+            --text-primary: #f8fafc;     /* slate-50 */
+            --text-secondary: #9ca3af;   /* gray-400 */
+            --shadow-color-light: rgba(0,0,0,0.3);
+            --chart-grid-color: rgba(255, 255, 255, 0.1);
+            --toggle-hover-bg: #374151;  /* gray-700 */
+        }
+
+        /* Applying CSS variables */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+        }
+
+        /* Universal transition for all theme-aware elements */
+        .themed-bg-secondary,
+        .themed-bg-tertiary,
+        .themed-text-primary,
+        .themed-text-secondary,
+        .themed-shadow,
+        #theme-toggle,
+        #log-panel .log-message,
+        #log-panel .log-timestamp {
+            transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+
+        .themed-bg-secondary { background-color: var(--bg-secondary); }
+        .themed-bg-tertiary { background-color: var(--bg-tertiary); }
+        .themed-text-primary { color: var(--text-primary); }
+        .themed-text-secondary { color: var(--text-secondary); }
+        .themed-shadow { box-shadow: 0 1px 3px 0 var(--shadow-color-light), 0 1px 2px -1px var(--shadow-color-light); }
+        .themed-toggle-hover:hover { background-color: var(--toggle-hover-bg); }
+        #log-panel .log-message { color: var(--text-primary); }
+        #log-panel .log-timestamp { color: var(--text-secondary); }
+
+        /* Chart container with fixed height */
+        .chart-container {
+            position: relative;
+            height: 350px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="transition-colors duration-300">
+
+    <div class="flex flex-col h-screen">
+        <!-- Header -->
+        <header class="themed-bg-secondary themed-shadow p-4 flex justify-between items-center z-10">
+            <h1 class="text-2xl font-bold themed-text-primary">Dashboard</h1>
+            <button id="theme-toggle" class="p-2 rounded-full themed-text-secondary themed-toggle-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <!-- Moon Icon -->
+                <svg id="theme-icon-dark" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                <!-- Sun Icon -->
+                <svg id="theme-icon-light" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+            </button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow p-4 md:p-6 lg:p-8 overflow-y-auto">
+            <div class="container mx-auto">
+                <!-- Charts Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Graph 1 -->
+                    <div class="themed-bg-secondary p-6 rounded-lg themed-shadow">
+                        <h2 class="text-xl font-semibold mb-4">Revenue Over Time</h2>
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                    <!-- Graph 2 -->
+                    <div class="themed-bg-secondary p-6 rounded-lg themed-shadow">
+                        <h2 class="text-xl font-semibold mb-4">User Signups by Department</h2>
+                        <div class="chart-container">
+                            <canvas id="signupsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logging Panel Section -->
+                <div class="themed-bg-secondary p-6 rounded-lg themed-shadow">
+                    <h2 class="text-xl font-semibold mb-4">System Logs</h2>
+                    <div id="log-panel" class="h-64 themed-bg-tertiary rounded-md p-4 overflow-y-auto font-mono text-sm">
+                        <!-- Log entries will be added here dynamically -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIconDark = document.getElementById('theme-icon-dark');
+            const themeIconLight = document.getElementById('theme-icon-light');
+            const html = document.documentElement;
+
+            const getThemeColors = () => {
+                const computedStyles = getComputedStyle(document.documentElement);
+                return {
+                    gridColor: computedStyles.getPropertyValue('--chart-grid-color').trim(),
+                    textColor: computedStyles.getPropertyValue('--text-primary').trim()
+                };
+            };
+            
+            // Function to update chart colors based on theme
+            const updateChartColors = () => {
+                const { gridColor, textColor } = getThemeColors();
+                
+                const updateOptions = (chartInstance) => {
+                    if (!chartInstance) return;
+                    chartInstance.options.scales.x.ticks.color = textColor;
+                    chartInstance.options.scales.x.grid.color = gridColor;
+                    chartInstance.options.scales.y.ticks.color = textColor;
+                    chartInstance.options.scales.y.grid.color = gridColor;
+                    chartInstance.options.plugins.legend.labels.color = textColor;
+                    chartInstance.update();
+                };
+
+                updateOptions(window.revenueChartInstance);
+                updateOptions(window.signupsChartInstance);
+            };
+
+            // Function to apply theme
+            const applyTheme = (theme) => {
+                if (theme === 'dark') {
+                    html.setAttribute('data-theme', 'dark');
+                    themeIconDark.classList.remove('hidden');
+                    themeIconLight.classList.add('hidden');
+                } else {
+                    html.setAttribute('data-theme', 'light');
+                    themeIconDark.classList.add('hidden');
+                    themeIconLight.classList.remove('hidden');
+                }
+                localStorage.setItem('theme', theme);
+                setTimeout(updateChartColors, 50); // Update charts after theme transition
+            };
+
+            // Check for saved theme
+            const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            
+            // Theme toggle button event listener
+            themeToggle.addEventListener('click', () => {
+                const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                applyTheme(newTheme);
+            });
+
+            // Chart.js Configuration
+            const setupCharts = () => {
+                const { gridColor, textColor } = getThemeColors();
+
+                const commonOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: textColor, font: { family: "'Inter', sans-serif" } } }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: textColor, font: { family: "'Inter', sans-serif" } },
+                            grid: { color: gridColor }
+                        },
+                        y: {
+                            ticks: { color: textColor, font: { family: "'Inter', sans-serif" } },
+                            grid: { color: gridColor }
+                        }
+                    }
+                };
+
+                // Revenue Chart (Line)
+                const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+                window.revenueChartInstance = new Chart(revenueCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                        datasets: [{
+                            label: 'Revenue (USD)',
+                            data: [12000, 19000, 15000, 21000, 18000, 24000, 22000],
+                            borderColor: '#4f46e5',
+                            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                        }]
+                    },
+                    options: commonOptions
+                });
+
+                // Signups Chart (Bar)
+                const signupsCtx = document.getElementById('signupsChart').getContext('2d');
+                window.signupsChartInstance = new Chart(signupsCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Engineering', 'Marketing', 'Sales', 'HR', 'Support'],
+                        datasets: [{
+                            label: 'New Users',
+                            data: [65, 59, 80, 81, 56],
+                            backgroundColor: [
+                                'rgba(236, 72, 153, 0.6)', 'rgba(16, 185, 129, 0.6)',
+                                'rgba(245, 158, 11, 0.6)', 'rgba(6, 182, 212, 0.6)',
+                                'rgba(139, 92, 246, 0.6)'
+                            ],
+                            borderColor: [
+                                'rgb(236, 72, 153)', 'rgb(16, 185, 129)',
+                                'rgb(245, 158, 11)', 'rgb(6, 182, 212)',
+                                'rgb(139, 92, 246)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: { ...commonOptions, indexAxis: 'y' }
+                });
+            };
+
+            // Logging Panel Logic
+            const logPanel = document.getElementById('log-panel');
+            const logLevels = {
+                'INFO': 'text-blue-400', 'WARN': 'text-yellow-400',
+                'ERROR': 'text-red-400', 'SUCCESS': 'text-green-400'
+            };
+            const logMessages = [
+                'Initializing system services...', 'Database connection successful.',
+                'User `admin` logged in from IP 192.168.1.1', 'API endpoint GET /api/users reached.',
+                'Data sync initiated with primary server.', 'WARNING: High memory usage detected on worker-03.',
+                'SUCCESS: Scheduled backup completed.', 'ERROR: Failed to connect to payment gateway.',
+                'New user registered: `user@example.com`', 'Cache cleared successfully.'
+            ];
+            
+            let logIndex = 0;
+            const addLogEntry = () => {
+                const timestamp = new Date().toLocaleTimeString();
+                const level = Object.keys(logLevels)[Math.floor(Math.random() * Object.keys(logLevels).length)];
+                const message = logMessages[logIndex % logMessages.length];
+                logIndex++;
+
+                const logEntry = document.createElement('div');
+                logEntry.innerHTML = `<span class="log-timestamp">${timestamp}</span> [<span class="${logLevels[level]} font-bold">${level}</span>]: <span class="log-message">${message}</span>`;
+                
+                logPanel.appendChild(logEntry);
+                logPanel.scrollTop = logPanel.scrollHeight;
+
+                if (logPanel.children.length > 100) {
+                    logPanel.removeChild(logPanel.firstChild);
+                }
+            };
+
+            // Initialize everything
+            applyTheme(savedTheme);
+            setupCharts();
+            addLogEntry();
+            setInterval(addLogEntry, Math.random() * (5000 - 2000) + 2000);
+        });
+    </script>
+
+</body>
+</html>
+
