@@ -1,0 +1,11 @@
+{
+  "alerts": {
+    "SOC (%)": 98,
+    "Voltage (V)": 4.8,
+    "Current (A)": 95.0,
+    "Battery Temp (°C)": 58.5,
+    "Ambient Temp (°C)": 46.1,
+    "Degradation Rate (%)": 21,
+    "Efficiency (%)": 89
+  }
+}

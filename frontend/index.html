@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en"> <!-- Removed default theme class -->
 <head>
@@ -22,31 +21,39 @@
 
         /* CSS Variables for Theming */
         :root {
-            --bg-primary: #f3f4f6;      /* gray-100 */
-            --bg-secondary: #ffffff;     /* white */
-            --bg-tertiary: #f9fafb;     /* gray-50 */
-            --text-primary: #1f2937;     /* gray-800 */
-            --text-secondary: #6b7280;   /* gray-500 */
-            --shadow-color-light: rgba(0,0,0,0.05);
+            --bg-primary: #f3f4f6;
+            --bg-secondary: rgba(255, 255, 255, 0.7); /* Glassmorphism Light */
+            --bg-tertiary: #f9fafb;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --shadow-color: rgba(0,0,0,0.1);
             --chart-grid-color: rgba(0, 0, 0, 0.1);
-            --toggle-hover-bg: #e5e7eb;  /* gray-200 */
+            --toggle-hover-bg: #e5e7eb;
+            --border-color: rgba(255, 255, 255, 0.3);
+            --gradient-start: #e0e7ff;
+            --gradient-end: #f3f4f6;
         }
 
         html[data-theme='dark'] {
-            --bg-primary: #111827;      /* gray-900 */
-            --bg-secondary: #1f2937;     /* gray-800 */
-            --bg-tertiary: #111827;      /* gray-900 also for log panel in dark */
-            --text-primary: #f8fafc;     /* slate-50 */
-            --text-secondary: #9ca3af;   /* gray-400 */
-            --shadow-color-light: rgba(0,0,0,0.3);
+            --bg-primary: #111827;
+            --bg-secondary: rgba(31, 41, 55, 0.6); /* Glassmorphism Dark */
+            --bg-tertiary: #111827;
+            --text-primary: #f8fafc;
+            --text-secondary: #9ca3af;
+            --shadow-color: rgba(0,0,0,0.4);
             --chart-grid-color: rgba(255, 255, 255, 0.1);
-            --toggle-hover-bg: #374151;  /* gray-700 */
+            --toggle-hover-bg: #374151;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --gradient-start: #1e293b;
+            --gradient-end: #111827;
         }
 
         /* Applying CSS variables */
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-primary);
+            /* New Gradient Background */
+            background-image: radial-gradient(circle at top left, var(--gradient-start), var(--gradient-end));
             color: var(--text-primary);
             transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
         }
@@ -59,33 +66,72 @@
         .themed-shadow,
         #theme-toggle,
         #log-panel .log-message,
-        #log-panel .log-timestamp {
-            transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        #log-panel .log-timestamp,
+        .time-range-btn {
+            transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out;
         }
 
-        .themed-bg-secondary { background-color: var(--bg-secondary); }
+        .themed-bg-secondary {
+            background-color: var(--bg-secondary);
+            /* Glassmorphism Effect */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+        }
+
         .themed-bg-tertiary { background-color: var(--bg-tertiary); }
         .themed-text-primary { color: var(--text-primary); }
         .themed-text-secondary { color: var(--text-secondary); }
-        .themed-shadow { box-shadow: 0 1px 3px 0 var(--shadow-color-light), 0 1px 2px -1px var(--shadow-color-light); }
+        .themed-shadow { box-shadow: 0 10px 15px -3px var(--shadow-color), 0 4px 6px -4px var(--shadow-color); }
         .themed-toggle-hover:hover { background-color: var(--toggle-hover-bg); }
         #log-panel .log-message { color: var(--text-primary); }
         #log-panel .log-timestamp { color: var(--text-secondary); }
-
-        /* Chart container with fixed height */
-        .chart-container {
-            position: relative;
-            height: 350px;
-            width: 100%;
+        
+        /* Styles for Time Range Buttons */
+        .time-range-btn {
+            background-color: var(--bg-tertiary);
+            color: var(--text-secondary);
         }
+        .time-range-btn:hover {
+            background-color: var(--toggle-hover-bg);
+            color: var(--text-primary);
+        }
+        .time-range-btn.active {
+            background-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+        }
+        html[data-theme='dark'] .time-range-btn.active {
+            background-color: #60a5fa;
+            color: var(--bg-primary);
+        }
+
+        /* Page Load Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-on-load {
+            opacity: 0; /* Start hidden */
+            animation: fadeInUp 0.5s ease-out forwards;
+            animation-delay: var(--animation-delay, 0s);
+        }
+
     </style>
 </head>
 <body class="transition-colors duration-300">
 
     <div class="flex flex-col h-screen">
         <!-- Header -->
-        <header class="themed-bg-secondary themed-shadow p-4 flex justify-between items-center z-10">
-            <h1 class="text-2xl font-bold themed-text-primary">Dashboard</h1>
+        <header class="p-4 flex justify-between items-center z-10 animate-on-load" style="--animation-delay: 0.1s;">
+            <h1 class="text-2xl font-bold themed-text-primary">Live Dashboard</h1>
             <button id="theme-toggle" class="p-2 rounded-full themed-text-secondary themed-toggle-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 <!-- Moon Icon -->
                 <svg id="theme-icon-dark" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
@@ -98,28 +144,72 @@
         <main class="flex-grow p-4 md:p-6 lg:p-8 overflow-y-auto">
             <div class="container mx-auto">
                 <!-- Charts Section -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                    <!-- Graph 1 -->
-                    <div class="themed-bg-secondary p-6 rounded-lg themed-shadow">
-                        <h2 class="text-xl font-semibold mb-4">Revenue Over Time</h2>
-                        <div class="chart-container">
-                            <canvas id="revenueChart"></canvas>
+                <div class="grid grid-cols-1 lg:grid-cols-6 gap-6 mb-6">
+                    <!-- Graph Section -->
+                    <div class="themed-bg-secondary p-6 rounded-lg themed-shadow lg:col-span-5 animate-on-load" style="--animation-delay: 0.2s;">
+                        <div class="space-y-6">
+                            <!-- Grid Chart -->
+                            <div>
+                                <h3 class="text-lg font-semibold themed-text-primary mb-2">Grid Consumption (kWh)</h3>
+                                <div class="relative h-28">
+                                    <canvas id="gridChart"></canvas>
+                                </div>
+                            </div>
+                            <!-- Solar Chart -->
+                            <div>
+                                <h3 class="text-lg font-semibold themed-text-primary mb-2">Solar Production (kWh)</h3>
+                                <div class="relative h-28">
+                                    <canvas id="solarChart"></canvas>
+                                </div>
+                            </div>
+                            <!-- Battery Chart -->
+                            <div>
+                                <h3 class="text-lg font-semibold themed-text-primary mb-2">Battery Usage (kWh)</h3>
+                                <div class="relative h-28">
+                                    <canvas id="batteryChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Time Range Buttons -->
+                        <div id="time-range-buttons" class="flex justify-center space-x-1 sm:space-x-2 mt-6">
+                            <button class="time-range-btn px-3 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-md" data-range="1H">1H</button>
+                            <button class="time-range-btn px-3 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-md active" data-range="1D">1D</button>
+                            <button class="time-range-btn px-3 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-md" data-range="1M">1M</button>
+                            <button class="time-range-btn px-3 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-md" data-range="1Y">1Y</button>
+                            <button class="time-range-btn px-3 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-md" data-range="Forever">ALL</button>
                         </div>
                     </div>
-                    <!-- Graph 2 -->
-                    <div class="themed-bg-secondary p-6 rounded-lg themed-shadow">
-                        <h2 class="text-xl font-semibold mb-4">User Signups by Department</h2>
-                        <div class="chart-container">
-                            <canvas id="signupsChart"></canvas>
+                    <!-- Battery Tank -->
+                    <div class="themed-bg-secondary p-6 rounded-lg themed-shadow lg:col-span-1 animate-on-load" style="--animation-delay: 0.3s;">
+                        <div class="flex justify-center items-center h-full py-5">
+                            <div class="flex flex-col items-center">
+                                <div class="w-20 h-80 border-4 border-gray-400 dark:border-gray-500 rounded-lg flex flex-col-reverse relative overflow-hidden">
+                                    <div id="battery-level" class="bg-green-500 rounded-b-md w-full" style="height: 50%; transition: height 0.5s ease-in-out;"></div>
+                                </div>
+                                <div id="battery-percentage" class="mt-4 text-2xl font-bold themed-text-primary">50%</div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Gemini AI Insights Section -->
+                <div class="themed-bg-secondary p-6 rounded-lg themed-shadow mb-6 animate-on-load" style="--animation-delay: 0.4s;">
+                    <h2 class="text-xl font-semibold mb-4 themed-text-primary">AI-Powered Insights</h2>
+                    <div class="flex items-center space-x-4">
+                        <button id="get-insight-btn" class="themed-bg-tertiary themed-text-primary font-bold py-2 px-4 rounded-lg hover:bg-opacity-80 transition-all themed-shadow">
+                            Generate Data Summary
+                        </button>
+                        <div id="insight-spinner" class="w-6 h-6 border-4 border-blue-500 border-dotted rounded-full animate-spin hidden"></div>
+                    </div>
+                    <div id="insight-result" class="mt-4 themed-text-secondary">Click the button to generate an AI summary of the current energy chart data.</div>
+                </div>
+
+
                 <!-- Logging Panel Section -->
-                <div class="themed-bg-secondary p-6 rounded-lg themed-shadow">
-                    <h2 class="text-xl font-semibold mb-4">System Logs</h2>
+                <div class="themed-bg-secondary p-6 rounded-lg themed-shadow animate-on-load" style="--animation-delay: 0.5s;">
+                    <h2 class="text-xl font-semibold mb-4 themed-text-primary">RL Model Suggestion to Meet Demands</h2>
                     <div id="log-panel" class="h-64 themed-bg-tertiary rounded-md p-4 overflow-y-auto font-mono text-sm">
-                        <!-- Log entries will be added here dynamically -->
+                        <!-- Log entries will be added here dynamically from WebSocket -->
                     </div>
                 </div>
             </div>
@@ -133,6 +223,7 @@
             const themeIconLight = document.getElementById('theme-icon-light');
             const html = document.documentElement;
 
+            // --- THEME LOGIC ---
             const getThemeColors = () => {
                 const computedStyles = getComputedStyle(document.documentElement);
                 return {
@@ -141,154 +232,297 @@
                 };
             };
             
-            // Function to update chart colors based on theme
             const updateChartColors = () => {
                 const { gridColor, textColor } = getThemeColors();
-                
-                const updateOptions = (chartInstance) => {
+                const chartInstances = [window.gridChartInstance, window.solarChartInstance, window.batteryChartInstance];
+                chartInstances.forEach(chartInstance => {
                     if (!chartInstance) return;
                     chartInstance.options.scales.x.ticks.color = textColor;
                     chartInstance.options.scales.x.grid.color = gridColor;
                     chartInstance.options.scales.y.ticks.color = textColor;
                     chartInstance.options.scales.y.grid.color = gridColor;
-                    chartInstance.options.plugins.legend.labels.color = textColor;
                     chartInstance.update();
-                };
-
-                updateOptions(window.revenueChartInstance);
-                updateOptions(window.signupsChartInstance);
+                });
             };
 
-            // Function to apply theme
             const applyTheme = (theme) => {
-                if (theme === 'dark') {
-                    html.setAttribute('data-theme', 'dark');
-                    themeIconDark.classList.remove('hidden');
-                    themeIconLight.classList.add('hidden');
-                } else {
-                    html.setAttribute('data-theme', 'light');
-                    themeIconDark.classList.add('hidden');
-                    themeIconLight.classList.remove('hidden');
-                }
+                html.setAttribute('data-theme', theme);
+                themeIconDark.classList.toggle('hidden', theme === 'light');
+                themeIconLight.classList.toggle('hidden', theme === 'dark');
                 localStorage.setItem('theme', theme);
-                setTimeout(updateChartColors, 50); // Update charts after theme transition
+                setTimeout(updateChartColors, 50);
             };
 
-            // Check for saved theme
             const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
             
-            // Theme toggle button event listener
             themeToggle.addEventListener('click', () => {
-                const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-                applyTheme(newTheme);
+                applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
             });
+            
+            // --- CHART DATA AND LOGIC ---
+            let initialChartData; // Store initial data to switch back to it
 
-            // Chart.js Configuration
             const setupCharts = () => {
                 const { gridColor, textColor } = getThemeColors();
-
                 const commonOptions = {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { labels: { color: textColor, font: { family: "'Inter', sans-serif" } } }
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: { 
+                            enabled: true, 
+                            mode: 'index', 
+                            intersect: false,
+                        },
                     },
                     scales: {
-                        x: {
-                            ticks: { color: textColor, font: { family: "'Inter', sans-serif" } },
-                            grid: { color: gridColor }
-                        },
-                        y: {
-                            ticks: { color: textColor, font: { family: "'Inter', sans-serif" } },
-                            grid: { color: gridColor }
-                        }
+                        x: { ticks: { color: textColor, font: { family: "'Inter', sans-serif" } }, grid: { color: gridColor, display: false } },
+                        y: { ticks: { color: textColor, font: { family: "'Inter', sans-serif" } }, grid: { color: gridColor } }
                     }
                 };
 
-                // Revenue Chart (Line)
-                const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-                window.revenueChartInstance = new Chart(revenueCtx, {
-                    type: 'line',
-                    data: {
-                        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-                        datasets: [{
-                            label: 'Revenue (USD)',
-                            data: [12000, 19000, 15000, 21000, 18000, 24000, 22000],
-                            borderColor: '#4f46e5',
-                            backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                            fill: true,
-                            tension: 0.4,
-                        }]
-                    },
-                    options: commonOptions
-                });
+                const get1DData = () => {
+                    const interpolateArray = (arr) => {
+                        const newArr = [];
+                        for (let i = 0; i < arr.length - 1; i++) {
+                            newArr.push(arr[i]);
+                            newArr.push(parseFloat(((arr[i] + arr[i+1]) / 2.0).toFixed(2)));
+                        }
+                        newArr.push(arr[arr.length - 1]);
+                        newArr.push(arr[arr.length - 1]);
+                        return newArr;
+                    };
+                    const labels = Array.from({ length: 96 }, (_, i) => {
+                        const hour = Math.floor(i / 4).toString().padStart(2, '0');
+                        const minute = ((i % 4) * 15).toString().padStart(2, '0');
+                        return `${hour}:${minute}`;
+                    });
+                    const originalGridData = [1.5,1.45,1.4,1.4,1.4,1.5,1.6,1.7,1.8,1.9,2,2.25,2.5,2.75,3,2.75,2.5,1.75,1,0.75,0.5,0.35,0.2,0.15,0.1,0.15,0.2,0.25,0.3,0.4,0.5,0.75,1,1.75,2.5,3,3.5,3.75,4,3.9,3.8,3.5,3.2,2.85,2.5,2.15,1.8,1.65];
+                    const originalSolarData = [0,0,0,0,0,0,0,0,0,0,0,0.1,0.2,0.5,0.8,1.15,1.5,2,2.5,3.25,4,4.75,5.5,5.75,6,5.9,5.8,5.5,5.2,4.85,4.5,4,3.5,2.75,2,1.25,0.5,0.25,0,0,0,0,0,0,0,0,0,0];
+                    const originalBatteryData = [1,0.9,0.8,0.7,0.6,0.55,0.5,0.5,0.5,0.65,0.8,0.9,1,0.75,0.5,0.25,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.25,0.5,0.75,1,1.25,1.5,1.65,1.8,1.9,2,1.9,1.8,1.5,1.2,1.1];
+                    return {
+                        labels,
+                        datasets: [
+                            { label: 'Grid (kWh)', data: interpolateArray(originalGridData) },
+                            { label: 'Solar (kWh)', data: interpolateArray(originalSolarData) },
+                            { label: 'Battery (kWh)', data: interpolateArray(originalBatteryData) }
+                        ]
+                    };
+                };
 
-                // Signups Chart (Bar)
-                const signupsCtx = document.getElementById('signupsChart').getContext('2d');
-                window.signupsChartInstance = new Chart(signupsCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Engineering', 'Marketing', 'Sales', 'HR', 'Support'],
-                        datasets: [{
-                            label: 'New Users',
-                            data: [65, 59, 80, 81, 56],
-                            backgroundColor: [
-                                'rgba(236, 72, 153, 0.6)', 'rgba(16, 185, 129, 0.6)',
-                                'rgba(245, 158, 11, 0.6)', 'rgba(6, 182, 212, 0.6)',
-                                'rgba(139, 92, 246, 0.6)'
-                            ],
-                            borderColor: [
-                                'rgb(236, 72, 153)', 'rgb(16, 185, 129)',
-                                'rgb(245, 158, 11)', 'rgb(6, 182, 212)',
-                                'rgb(139, 92, 246)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: { ...commonOptions, indexAxis: 'y' }
-                });
+                initialChartData = get1DData(); // Store it
+
+                const createChartConfig = (dataset, color, showXAxis) => {
+                    return {
+                        type: 'line',
+                        data: {
+                            labels: initialChartData.labels,
+                            datasets: [{
+                                ...dataset,
+                                backgroundColor: color.bg,
+                                borderColor: color.border,
+                                borderWidth: 1,
+                                fill: true,
+                                tension: 0.4,
+                                pointRadius: 0
+                            }]
+                        },
+                        options: {
+                            ...commonOptions,
+                            scales: {
+                                x: { ...commonOptions.scales.x, ticks: { ...commonOptions.scales.x.ticks, display: showXAxis, autoSkip: true, maxTicksLimit: 12 } },
+                                y: { ...commonOptions.scales.y, beginAtZero: true }
+                            }
+                        }
+                    };
+                };
+
+                window.gridChartInstance = new Chart(document.getElementById('gridChart').getContext('2d'), createChartConfig(
+                    initialChartData.datasets[0], { bg: 'rgba(239, 68, 68, 0.5)', border: 'rgba(239, 68, 68, 1)' }, false
+                ));
+                window.solarChartInstance = new Chart(document.getElementById('solarChart').getContext('2d'), createChartConfig(
+                    initialChartData.datasets[1], { bg: 'rgba(245, 158, 11, 0.5)', border: 'rgba(245, 158, 11, 1)' }, false
+                ));
+                window.batteryChartInstance = new Chart(document.getElementById('batteryChart').getContext('2d'), createChartConfig(
+                    initialChartData.datasets[2], { bg: 'rgba(59, 130, 246, 0.5)', border: 'rgba(59, 130, 246, 1)' }, true
+                ));
             };
 
-            // Logging Panel Logic
-            const logPanel = document.getElementById('log-panel');
-            const logLevels = {
-                'INFO': 'text-blue-400', 'WARN': 'text-yellow-400',
-                'ERROR': 'text-red-400', 'SUCCESS': 'text-green-400'
-            };
-            const logMessages = [
-                'Initializing system services...', 'Database connection successful.',
-                'User `admin` logged in from IP 192.168.1.1', 'API endpoint GET /api/users reached.',
-                'Data sync initiated with primary server.', 'WARNING: High memory usage detected on worker-03.',
-                'SUCCESS: Scheduled backup completed.', 'ERROR: Failed to connect to payment gateway.',
-                'New user registered: `user@example.com`', 'Cache cleared successfully.'
-            ];
-            
-            let logIndex = 0;
-            const addLogEntry = () => {
-                const timestamp = new Date().toLocaleTimeString();
-                const level = Object.keys(logLevels)[Math.floor(Math.random() * Object.keys(logLevels).length)];
-                const message = logMessages[logIndex % logMessages.length];
-                logIndex++;
-
-                const logEntry = document.createElement('div');
-                logEntry.innerHTML = `<span class="log-timestamp">${timestamp}</span> [<span class="${logLevels[level]} font-bold">${level}</span>]: <span class="log-message">${message}</span>`;
+            const updateChartTimeRange = (range) => {
+                const charts = [window.gridChartInstance, window.solarChartInstance, window.batteryChartInstance];
+                if (!charts.every(c => c)) return;
                 
+                let newLabels = [];
+                let newGridData = [], newSolarData = [], newBatteryData = [];
+                const now = new Date();
+
+                switch(range) {
+                    case '1H':
+                        for (let i = 60; i >= 0; i--) {
+                            const time = new Date(now.getTime() - i * 60 * 1000);
+                            newLabels.push(time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+                            newGridData.push(Math.random() * 2); newSolarData.push(Math.random() * 1); newBatteryData.push(Math.random() * 0.5);
+                        }
+                        break;
+                    case '1M':
+                        for (let i = 30; i >= 0; i--) {
+                            const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+                            newLabels.push(date.toLocaleDateString([], { month: 'short', day: 'numeric' }));
+                            newGridData.push(Math.random() * 50 + 10); newSolarData.push(Math.random() * 80); newBatteryData.push(Math.random() * 30);
+                        }
+                        break;
+                    case '1Y':
+                        for (let i = 11; i >= 0; i--) {
+                            const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                            newLabels.push(date.toLocaleDateString([], { year: '2-digit', month: 'short' }));
+                            newGridData.push(Math.random() * 1500 + 500); newSolarData.push(Math.random() * 2000); newBatteryData.push(Math.random() * 800);
+                        }
+                        break;
+                    case 'Forever':
+                         for (let i = 4; i >= 0; i--) {
+                            newLabels.push(now.getFullYear() - i);
+                            newGridData.push(Math.random() * 18000 + 6000); newSolarData.push(Math.random() * 24000); newBatteryData.push(Math.random() * 9000);
+                        }
+                        break;
+                    case '1D':
+                    default:
+                        newLabels = initialChartData.labels;
+                        newGridData = initialChartData.datasets[0].data;
+                        newSolarData = initialChartData.datasets[1].data;
+                        newBatteryData = initialChartData.datasets[2].data;
+                        break;
+                }
+                
+                const datasets = [newGridData, newSolarData, newBatteryData];
+                charts.forEach((chart, index) => {
+                    chart.data.labels = newLabels;
+                    chart.data.datasets[0].data = datasets[index];
+                    chart.update();
+                });
+            };
+            
+            document.querySelectorAll('.time-range-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    document.querySelector('.time-range-btn.active').classList.remove('active');
+                    e.currentTarget.classList.add('active');
+                    updateChartTimeRange(e.currentTarget.dataset.range);
+                });
+            });
+
+            // --- LOGGING & WEBSOCKET ---
+            const logPanel = document.getElementById('log-panel');
+            const addLogEntry = (message) => {
+                const logEntry = document.createElement('div');
+                logEntry.innerHTML = `<span class="log-timestamp">${new Date().toLocaleTimeString()}</span> <span class="log-message">${message}</span>`;
                 logPanel.appendChild(logEntry);
                 logPanel.scrollTop = logPanel.scrollHeight;
+                if (logPanel.children.length > 100) logPanel.removeChild(logPanel.firstChild);
+            };
 
-                if (logPanel.children.length > 100) {
-                    logPanel.removeChild(logPanel.firstChild);
+            const socket = new WebSocket('ws://localhost:8080');
+            socket.onopen = (e) => console.log("WebSocket connection established.");
+
+            socket.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    if (!data.type || !data.payload) return;
+                    switch(data.type) {
+                        case 'log':
+                            if(data.payload.message ) addLogEntry(data.payload.message);
+                            break;
+                        case 'energyUpdate':
+                            const charts = [window.gridChartInstance, window.solarChartInstance, window.batteryChartInstance];
+                            if (charts.every(c => c) && document.querySelector('.time-range-btn[data-range="1D"]').classList.contains('active')) {
+                                const newLabels = data.payload.labels;
+                                const datasets = data.payload.datasets;
+                                charts.forEach((chart, index) => {
+                                    chart.data.labels = newLabels;
+                                    chart.data.datasets[0].data = datasets[index].data;
+                                    chart.update();
+                                });
+                            }
+                            break;
+                        case 'batteryChargeUpdate':
+                            const batteryLevelEl = document.getElementById('battery-level');
+                            const batteryPercentageEl = document.getElementById('battery-percentage');
+                            if (batteryLevelEl && batteryPercentageEl && typeof data.payload.level === 'number') {
+                                const level = Math.max(0, Math.min(100, data.payload.level));
+                                batteryLevelEl.style.height = `${level}%`;
+                                batteryPercentageEl.textContent = `${Math.round(level)}%`;
+                            }
+                            break;
+                    }
+                } catch (error) {
+                    console.error("Failed to parse incoming data:", error);
+                    addLogEntry("Received unparsable data from server.", "ERROR");
                 }
             };
+            socket.onclose = (event) => addLogEntry(event.wasClean ? `Connection closed cleanly.` : 'Connection lost.', 'WARN');
+            socket.onerror = (error) => addLogEntry(`WebSocket Error: Could not connect to ws://localhost:8080.`, 'ERROR');
+
+            // --- GEMINI API ---
+            const getInsightBtn = document.getElementById('get-insight-btn');
+            const insightResultEl = document.getElementById('insight-result');
+            const insightSpinner = document.getElementById('insight-spinner');
+            
+            getInsightBtn.addEventListener('click', async () => {
+                insightResultEl.textContent = 'Generating summary...';
+                insightSpinner.classList.remove('hidden');
+                getInsightBtn.disabled = true;
+
+                const formatDataset = (chartData) => {
+                    const dataset = chartData.datasets[0];
+                    const dataString = chartData.labels.map((label, i) => `${label}: ${dataset.data[i] || 0} kWh`).join('; ');
+                    return `${dataset.label}: ${dataString}`;
+                };
+
+                const energyString = [
+                    formatDataset(window.gridChartInstance.data),
+                    formatDataset(window.solarChartInstance.data),
+                    formatDataset(window.batteryChartInstance.data)
+                ].join('. ');
+
+                const systemPrompt = "You are a helpful business and energy analyst. Summarize the following data concisely, highlighting key trends or interesting points. Provide the output in a single paragraph.";
+                const userQuery = `Energy Data: ${energyString}.`;
+                const apiKey = ""; 
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: userQuery }] }],
+                            systemInstruction: { parts: [{ text: systemPrompt }] },
+                        })
+                    });
+
+                    if (!response.ok) throw new Error(`API call failed with status: ${response.status}`);
+
+                    const result = await response.json();
+                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    
+                    if (text) {
+                        insightResultEl.textContent = text;
+                    } else {
+                        insightResultEl.textContent = 'Could not generate an insight from the data. The response was empty.';
+                    }
+
+                } catch (error) {
+                    console.error("Gemini API Error:", error);
+                    insightResultEl.textContent = 'An error occurred while generating the insight. Please check the console.';
+                } finally {
+                    insightSpinner.classList.add('hidden');
+                    getInsightBtn.disabled = false;
+                }
+            });
 
             // Initialize everything
             applyTheme(savedTheme);
             setupCharts();
-            addLogEntry();
-            setInterval(addLogEntry, Math.random() * (5000 - 2000) + 2000);
         });
     </script>
-
 </body>
 </html>
 

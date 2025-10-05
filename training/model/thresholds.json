@@ -1,0 +1,120 @@
+{
+  "num_cols": [
+    "SOC (%)",
+    "Voltage (V)",
+    "Current (A)",
+    "Battery Temp (\u00b0C)",
+    "Ambient Temp (\u00b0C)",
+    "Charging Duration (min)",
+    "Degradation Rate (%)",
+    "Efficiency (%)",
+    "Charging Cycles"
+  ],
+  "thresholds": {
+    "SOC (%)": {
+      "p1": 11.178417813180191,
+      "p5": 14.089533563168848,
+      "p25": 31.237594082983016,
+      "p50": 54.712663889212976,
+      "p75": 76.98876291780311,
+      "p95": 95.26076541813993,
+      "p99": 98.78648428810556
+    },
+    "Voltage (V)": {
+      "p1": 3.5084725171171334,
+      "p5": 3.533661977025708,
+      "p25": 3.6687519898104477,
+      "p50": 3.8631137344987163,
+      "p75": 4.032325540144037,
+      "p95": 4.170353386000256,
+      "p99": 4.194750042524302
+    },
+    "Current (A)": {
+      "p1": 10.796776135304803,
+      "p5": 14.211257533870794,
+      "p25": 33.52158794740872,
+      "p50": 55.055252765130646,
+      "p75": 78.31931747463453,
+      "p95": 96.04762994849955,
+      "p99": 98.57060198863817
+    },
+    "Battery Temp (\u00b0C)": {
+      "p1": 20.216116355164026,
+      "p5": 21.02520560291217,
+      "p25": 24.83801540822157,
+      "p50": 29.685585675894146,
+      "p75": 34.75081621073319,
+      "p95": 38.77113436543977,
+      "p99": 39.78915416232549
+    },
+    "Ambient Temp (\u00b0C)": {
+      "p1": 15.21414503346634,
+      "p5": 16.09448683985743,
+      "p25": 19.899480113084817,
+      "p50": 24.89196193556674,
+      "p75": 29.799869040915056,
+      "p95": 33.979905780138644,
+      "p99": 34.83074151082998
+    },
+    "Charging Duration (min)": {
+      "p1": 21.40071843853822,
+      "p5": 25.26896224098386,
+      "p25": 44.93800043297279,
+      "p50": 69.04028153285753,
+      "p75": 93.98517781829635,
+      "p95": 116.03857510295914,
+      "p99": 118.73749272097322
+    },
+    "Degradation Rate (%)": {
+      "p1": 4.597958091310109,
+      "p5": 5.581747698277818,
+      "p25": 8.010985077798246,
+      "p50": 10.027301093686965,
+      "p75": 12.072455577844039,
+      "p95": 14.349212726462241,
+      "p99": 15.617820033258058
+    },
+    "Efficiency (%)": {
+      "p1": 96.8764359933484,
+      "p5": 97.13015745470756,
+      "p25": 97.5855088844312,
+      "p50": 97.9945397812626,
+      "p75": 98.39780298444035,
+      "p95": 98.88365046034443,
+      "p99": 99.08040838173798
+    },
+    "Charging Cycles": {
+      "p1": 108.99,
+      "p5": 145.0,
+      "p25": 317.75,
+      "p50": 571.0,
+      "p75": 786.0,
+      "p95": 952.05,
+      "p99": 990.01
+    }
+  },
+  "actions": {
+    "Battery Temp (\u00b0C)": {
+      "high_action": "Reduce charging current / enable cooling",
+      "explain": "High battery temperature accelerates degradation and can be unsafe."
+    },
+    "SOC (%)": {
+      "low_action": "Stop discharge; schedule charging",
+      "high_action": "Avoid pushing to 100% frequently to extend battery life"
+    },
+    "Voltage (V)": {
+      "high_action": "Check for over-voltage condition; reduce charger voltage",
+      "low_action": "Check connections; possible under-voltage"
+    },
+    "Degradation Rate (%)": {
+      "high_action": "Schedule BMS diagnostics; plan battery replacement",
+      "explain": "High degradation indicates aging cells / misuse."
+    },
+    "Efficiency (%)": {
+      "low_action": "Investigate charging system / power electronics"
+    },
+    "Current (A)": {
+      "high_action": "Reduce charging rate; enable cooling"
+    }
+  }
+}
